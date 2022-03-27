@@ -1,3 +1,2 @@
-
-*.pyc
-Python/logfile.log
+__pycache__
+logfile.log

@@ -282,7 +282,7 @@ class Prog_GeneratorPage(tk.Frame):
                          "text"     : "Dialog",
                          "padx"     : 20,
                          "tooltip"  : "Dialog aufrufen"},
-                        {"Icon_name": "Btn_Send_to_ARDUINO.png",
+                        {"Icon_name": "btn_send_to_arduino.png",
                          "command"  : F00.Arduino_Button_Click,
                          "shift_command": F00.Arduino_Button_Shift_Click,
                          "text"     : "Z. Arduino\nschicken",
@@ -521,10 +521,10 @@ class Prog_GeneratorPage(tk.Frame):
             #logging.error("Exception in start_ARDUINO_program_Popen %s - %s",e,self.startfile[0])
             self.arduinoMonitorPage.add_text_to_textwindow("\n*****************************************************\n",highlight="Error")
             self.arduinoMonitorPage.add_text_to_textwindow("\n* Exception in start_ARDUINO_program_Popen "+ e + "-" + self.startfile[0]+ "\n",highlight="Error")
-            self.arduinoMonitorPage.add_text_to_textwindow("\n*****************************************************\n",highlight="Error")    
-    
-    
-            
+            self.arduinoMonitorPage.add_text_to_textwindow("\n*****************************************************\n",highlight="Error")
+
+
+
     def start_ARDUINO_program_Popen(self):
         self.Update_Compile_Time(Start=True)
         try:
@@ -536,7 +536,7 @@ class Prog_GeneratorPage(tk.Frame):
             self.arduinoMonitorPage.add_text_to_textwindow("\n*****************************************************\n",highlight="Error")
             self.arduinoMonitorPage.add_text_to_textwindow("\n* Exception in start_ARDUINO_program_Popen "+ e + "-" + self.startfile[0]+ "\n",highlight="Error")
             self.arduinoMonitorPage.add_text_to_textwindow("\n*****************************************************\n",highlight="Error")
-    
+
     def upload_to_ARDUINO(self,_event=None,arduino_type="LED",init_arduino=False):
     # send effect to ARDUINO
         if self.controller.ARDUINO_status == "Connecting":
@@ -544,35 +544,35 @@ class Prog_GeneratorPage(tk.Frame):
             return
         self.controller.disconnect()
         self.controller.set_connectstatusmessage("Kompilieren und Hochladen ...",fg="green")
-        
+
         #if arduino_type == "LED":
         #    self.create_ARDUINO_CMD(init_arduino=init_arduino)
-                
+
         private_startfile = self.getConfigData("startcmdcb")
-        
+
         macrodata = self.controller.MacroDef.data.get("ARDUINOMonitorPage",{})
-        
+
         self.arduinoMonitorPage=self.controller.getFramebyName ("ARDUINOMonitorPage")
         self.arduinoMonitorPage.delete_text_from_textwindow()
-        
+
         file_not_found = True
-        
+
         system_platform = platform.platform()
-        
+
         if not "Windows" in system_platform:
             private_startfile = True
-        
+
         self.ARDUINO_message4=""
-        
+
         if private_startfile == True:
             filename = self.getConfigData("startcmd_filename")
             logging.debug("upload_to_ARDUINO - Individual Filename: %s",filename)
             if filename == " " or filename == "":
                 filename = "No Filename provided"
             logging.debug("send to ARDUINO - Platform: %s",platform.platform())
-            
+
             macos = "macOS" in system_platform
-            macos_fileending = "/Contents/MacOS/Arduino" 
+            macos_fileending = "/Contents/MacOS/Arduino"
             if macos:
                 logging.debug("This is a MAC")
                 if not filename.endswith(macos_fileending):
@@ -583,12 +583,12 @@ class Prog_GeneratorPage(tk.Frame):
                     file_not_found = False
                 if file_not_found:
                     self.ARDUINO_message4 = macrodata.get("Message_4","") + filename
-    
+
         else:
             file_not_found = True
             #check if arduino_debug.exe exists in the program dirs
             Win_ARDUINO_searchlist = macrodata.get("Win_ARDUINOIDE","")
-            
+
             for IDE_filename in Win_ARDUINO_searchlist:
                 if os.path.isfile(IDE_filename):
                     file_not_found = False
@@ -600,50 +600,50 @@ class Prog_GeneratorPage(tk.Frame):
         self.controller.showFramebyName("ARDUINOMonitorPage")
         self.controller.set_connectstatusmessage("Kompilieren und Hochladen ...",fg="green")
         self.update()
-        
+
         if file_not_found:
-            self.arduinoMonitorPage.add_text_to_textwindow("\n*******************************************************\n"+self.ARDUINO_message4+"\n*******************************************************\n")            
+            self.arduinoMonitorPage.add_text_to_textwindow("\n*******************************************************\n"+self.ARDUINO_message4+"\n*******************************************************\n")
         else:
             serport = self.getConfigData("serportname")
             arduinotypenumber = self.getConfigData("ArduinoTypeNumber")
             ArduinoTypeNumber_config_dict = self.get_param_config_dict("ARDUINO Type")
             ArduinotypeList = ArduinoTypeNumber_config_dict["Values2Params"]
             ArduinoType = ArduinotypeList[arduinotypenumber]
-            
+
             self.ARDUINO_message1 = macrodata.get("Message_1","")
             self.ARDUINO_message2 = macrodata.get("Message_2","")
             self.ARDUINO_message3 = macrodata.get("Message_3","")
-            
+
             #h_filedir = os.path.dirname(filename)
             filedir = os.path.dirname(os.path.realpath(__file__))
             h_filedir1 = os.path.dirname(filedir)
-            h_filedir = os.path.dirname(h_filedir1)            
+            h_filedir = os.path.dirname(h_filedir1)
             #os.chdir(h_filedir)
             os.chdir(self.controller.mainfile_dir)
-            
+
             #filedirname = os.path.join(h_filedir, filename)
             #if platform.platform == "darwin":
             #    logging.debug("This is a MAC")
             #    filedirname = filename + "/Contents/MacOS/Arduino"
             #else:
             filedirname = filename
-            
+
             if arduino_type=="DCC":
                 ino_filename = self.controller.get_macrodef_data("StartPage","InoName_DCC") #"../../examples/23_A.DCC_Interface/23_A.DCC_Interface.ino"
             elif arduino_type=="Selectrix":
                 ino_filename = self.controller.get_macrodef_data("StartPage","InoName_SX") #"../../examples/23_A.DCC_Interface/23_A.DCC_Interface.ino"
             elif arduino_type=="LED":
                 ino_filename = self.controller.get_macrodef_data("StartPage","InoName_LED") #"LEDs_AutoProg.ino"
-            
+
             if ArduinoType == " ":
                 self.startfile = [filedirname,ino_filename,"--upload","--port",serport,"--pref","programmer=arduino:arduinoisp","--pref","build.path=../Arduino_Build_LEDs_AutoProg","--preserve-temp-files"]
             else:
                 self.startfile = [filedirname,ino_filename,"--upload","--port",serport,"--board",ArduinoType,"--pref","programmer=arduino:arduinoisp","--pref","build.path=../Arduino_Build_LEDs_AutoProg","--preserve-temp-files"]
-            
+
             logging.debug(repr(self.startfile))
-            
+
             self.arduinoMonitorPage.add_text_to_textwindow("\n\n*******************************************************\n"+self.ARDUINO_message1+"\n*******************************************************\n\n")
-            
+
             if arduino_type=="LED":
                 self.arduinoMonitorPage.add_text_to_textwindow("***************************************************************************\n")
                 self.arduinoMonitorPage.add_text_to_textwindow("*    Zum                                                                  *\n")
@@ -681,10 +681,10 @@ class Prog_GeneratorPage(tk.Frame):
                 self.arduinoMonitorPage.add_text_to_textwindow("*   |    [@] [@] [@]          |  Falls Probleme auftreten, dann werden    *\n")
                 self.arduinoMonitorPage.add_text_to_textwindow("*   |__________________[:::]__|  die Fehler hier aufgelistet              *\n")
                 self.arduinoMonitorPage.add_text_to_textwindow("*                                                                         *\n")
-                self.arduinoMonitorPage.add_text_to_textwindow("***************************************************************************\n")                
+                self.arduinoMonitorPage.add_text_to_textwindow("***************************************************************************\n")
             else:
                 pass
-            
+
             self.controller.showFramebyName("ARDUINOMonitorPage")
             start_with_realtime_logging = True
             use_start_cmd = False
@@ -693,7 +693,7 @@ class Prog_GeneratorPage(tk.Frame):
                 h_filedir1 = os.path.dirname(filedir)
                 h_filedir = os.path.dirname(h_filedir1)
                 filename = "Start_Arduino.cmd"
-                
+
                 os.chdir(h_filedir)
                 self.startfile = filename
                 os.startfile(self.startfile)
@@ -705,9 +705,9 @@ class Prog_GeneratorPage(tk.Frame):
     def checkcolor(self,ColorTable,callback=None):
         self.controller.coltab = ColorTable
         self.controller.checkcolor_callback = callback
-        self.controller.showFramebyName("ColorCheckPage")    
-    
-    
-        
+        self.controller.showFramebyName("ColorCheckPage")
+
+
+
 
 
